@@ -1,0 +1,277 @@
+---
+title: "Firs Exploration of PILA Data"
+author: "Lennard Naumann"
+date: "2023-02-05"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+
+library(tidyverse)
+library(stringi)
+library(ggExtra)
+
+#### Data Prep Jobs
+
+data <- read.csv("../D4 Third Download/pila_2023-04-24_2011_2022_1_vars.csv", encoding = "latin1") %>% 
+  mutate(
+    Municipio = stri_trans_general(Municipio, id = "Latin-ASCII"),
+    sector = stri_trans_general(sector, id = "Latin-ASCII")
+  ) %>% 
+  # Start in 2011, barely anything before that (see graphs w/o this restriction for comparison)
+  filter(year >= 2011, sector == "B - EXPLOTACION DE MINAS Y CANTERAS")
+
+data_nz <- data %>% 
+  group_by(Municipio) %>% 
+  filter(sum(!is.na(value)) > 0) %>% 
+  ungroup %>% 
+  mutate(value = ifelse(is.na(value), 0, value))
+
+data_sum <- data %>% 
+  group_by(Municipio) %>% 
+  summarise(
+    n = sum(!is.na(value)),
+    mean = mean(value, na.rm = T),
+    sd = sd(value, na.rm = T)
+  )
+
+
+data_nz2 <- filter(data_nz, Municipio != "11001 - Bogot, D.C.", Municipio != "76001 - Cali")
+
+data_sum_nte <- data_sum
+Munips_top75 <- data_sum_nte %>% 
+  filter(mean >= quantile(data_sum_nte$mean, .25, na.rm = T)) %>% 
+  pull(Municipio)
+Munips_top05 <- data_sum_nte %>% 
+  filter(mean >= quantile(data_sum_nte$mean, .95, na.rm = T)) %>% 
+  arrange(-mean) %>% 
+  pull(Municipio)
+data_nte <- data_nz %>% 
+  filter(Municipio %in% Munips_top75)
+
+Munips_top75_full <- data_sum_nte %>% 
+  filter(n == 8) %>% 
+  pull(Municipio)
+data_nte_full <- filter(data_nte, Municipio %in% Munips_top75_full)
+
+#### Data prep Mining
+
+anm <- read.csv("../../0Data/Colombia ANM/Mineria_-_Materiales_extraidos_en_Colombia_2012_a_2017.csv")
+names(anm) <- stri_trans_general(names(anm), id = "Latin-ASCII")
+
+dt_min <- anm %>% 
+  filter(Recurso.Natural == "CARBON") %>% 
+  transmute(
+    Municipio = str_to_upper(stri_trans_general(Municipio.Productor, id = "Latin-ASCII")),
+    Departamento = str_to_upper(stri_trans_general(Departamento, id = "Latin-ASCII")),
+    year = as.numeric(Ano.Produccion),
+    CoalOutput = ifelse(
+      Unidad.Medida == "TONELADAS", Cantidad.Produccion, ifelse(
+        Unidad.Medida == "LIBRAS", Cantidad.Produccion/2000, ifelse(
+          Unidad.Medida == "GRAMOS", Cantidad.Produccion/1000000, ifelse(
+            Unidad.Medida == "QUILATES", Cantidad.Produccion/5000000, NA
+          ))))
+  ) %>% 
+  filter(!is.na(CoalOutput) & Municipio!="") %>% 
+  
+  # Correct non-matching municipality names:
+  mutate(
+    # Corrections by hand
+    Municipio = case_when(
+      Municipio == "AMAGA" ~ "AMAG",
+      Municipio == "ANGELOPOLIS" ~ "ANGELPOLIS",
+      Municipio == "AGUSTIN CODAZZI" ~ "NA",
+      Municipio == "ALBANIA - SANTANDER" ~ "NA",
+      Municipio == "ALBANIA - LA GUAJIRA" ~ "NA",
+      Municipio == "AMAGA" ~ "AMAG",
+      Municipio == "ARBOLEDAS - NORTE DE SANTANDER" ~ "ARBOLEDAS",
+      Municipio == "BETEITIVA" ~ "BETITIVA",
+      Municipio == "BOYACA - BOYACA" ~ "BOYAC",
+      Municipio == "BRICENO - BOYACA" ~ "BRICEO",
+      Municipio == "CACOTA" ~ "CCOTA",
+      Municipio == "CAJIBIO" ~ "CAJIC",
+      Municipio == "CAPARRAPI" ~ "CAPARRAP",
+      Municipio == "CHINACOTA" ~ "CHINCOTA",
+      Municipio == "CHIQUINQUIRA" ~ "CHIQUINQUIR",
+      Municipio == "CHIRIGUANA" ~ "CHIRIGUAN",
+      Municipio == "CHISCAS" ~ "NA",
+      Municipio == "CHITAGA" ~ "CHITAG",
+      Municipio == "CHIVATA" ~ "CHIVAT",
+      Municipio == "CIENAGA - MAGALENA" ~ "NA",
+      Municipio == "COMBITA" ~ "CMBITA",
+      Municipio == "CUCUNUBA" ~ "CUCUNUB",
+      Municipio == "CUCUTA" ~ "CUCAITA",
+      Municipio == "EL CARMEN DE CHUCURI" ~ "EL CARMEN DE CHUCUR",
+      Municipio == "EL ESPINO" ~ "NA",
+      Municipio == "EL TAMBO - CAUCA" ~ "EL TAMBO",
+      Municipio == "GUACHETA" ~ "GUACHET",
+      Municipio == "GUAVATA" ~ "GUATAVITA",
+      Municipio == "HERRAN" ~ "HERRN",
+      Municipio == "JAMUNDI" ~ "JAMUND",
+      Municipio == "JERICO - BOYACA" ~ "JERIC",
+      Municipio == "JERUSALEN" ~ "NA",
+      Municipio == "LANDAZURI" ~ "LANDZURI",
+      Municipio == "MONGUI" ~ "MONGU",
+      Municipio == "MORALES - CAUCA" ~ "MORALES",
+      Municipio == "MUTISCUA" ~ "NA",
+      Municipio == "NEMOCON" ~ "NEMOCN",
+      Municipio == "NUEVO COLON" ~ "NA",
+      Municipio == "PACHAVITA" ~ "NA",
+      Municipio == "PATIA" ~ "PATA",
+      Municipio == "PAZ DE RIO" ~ "PAZ DE RO",
+      Municipio == "PESCA" ~ "NA",
+      Municipio == "RAQUIRA" ~ "NA",
+      Municipio == "SABOYA" ~ "SABOY",
+      Municipio == "SAMACA" ~ "SAMAC",
+      Municipio == "SAN CAYETANO - CUNDINAMARCA" ~ "SAN CAYETANO",
+      Municipio == "SAN CAYETANO - NORTE DE SANTANDER" ~ "SAN CAYETANO",
+      Municipio == "SAN JOSE" ~ "NA",
+      Municipio == "SAN JOSE DE MIRANDA" ~ "NA",
+      Municipio == "SAN MARTIN - META" ~ "SAN MARTN",
+      Municipio == "SAN MIGUEL - SANTANDER" ~ "SAN MIGUEL",
+      Municipio == "SANTA MARIA - BOYACA" ~ "NA",
+      Municipio == "SANTIAGO - NORTE DE SANTANDER" ~ "SANTIAGO",
+      Municipio == "SANTO TOMAS" ~ "NA",
+      Municipio == "SOCOTA" ~ "SOCOT",
+      Municipio == "SOPETRAN" ~ "SOPETRN",
+      Municipio == "SOTAQUIRA" ~ "SOTAQUIR",
+      Municipio == "SUAREZ - CAUCA" ~ "SUREZ",
+      Municipio == "SUSACON" ~ "SUSA",
+      Municipio == "TIBANA" ~ "NA",
+      Municipio == "TITIRIBI" ~ "TITIRIB",
+      Municipio == "TIBU" ~ "TIB",
+      Municipio == "TOLEDO - ANTIOQUIA" ~ "TOLEDO",
+      Municipio == "TOLEDO - NORTE DE SANTANDER" ~ "TOLEDO",
+      Municipio == "TOPAGA" ~ "TPAGA",
+      Municipio == "TURMEQUE" ~ "TURMEQU",
+      Municipio == "VELEZ" ~ "NA",
+      Municipio == "VENECIA - ANTIOQUIA" ~ "VENECIA",
+      Municipio == "VILLAPINZON" ~ "VILLAPINZN",
+      Municipio == "YACOPI" ~ "YACOP",
+      Municipio == "ZIPAQUIRA" ~ "ZIPAQUIR",
+      T ~ Municipio
+    )
+  ) %>% 
+  filter(Municipio != "NA") %>% 
+  group_by(Departamento, Municipio, year) %>% 
+  dplyr::summarise(CoalOutput = sum(CoalOutput, na.rm = T)) %>% 
+  ungroup() %>% 
+  select(-Departamento)
+
+# Create merged data
+merged_data <- data_nte %>%
+  transmute(
+    Municipio = str_to_upper(str_remove_all(Municipio, "[0-9]* - ")),
+    year = year,
+    NumeroTotalEmpleados = value
+  ) %>% 
+  left_join(dt_min, by = c("Municipio", "year"))
+```
+
+
+
+## Mining Jobs
+
+### Path plot for total number of cotizantes
+
+```{r, fig.height=12, fig.width=12, echo = F, results = F}
+ggplot(data_nte, aes(x = year, y = value, group = Municipio)) +
+  geom_path(col = "lightgrey") +
+  theme_minimal()
+
+```
+
+
+### Path plot for total number of cotizantes, only full observations
+
+```{r, fig.height=12, fig.width=12, echo = F, results = F}
+ggplot(data_nte_full, aes(x = year, y = value, group = Municipio)) +
+  facet_wrap(variable~.)+
+  geom_path(col = "lightgrey") +
+  theme_minimal()
+
+```
+
+
+### Path plot for log(total number of cotizantes), only full observations
+
+```{r, fig.height=12, fig.width=12, echo = F, results = F}
+ggplot(data_nte_full, aes(x = year, y = value, group = Municipio)) +
+  geom_path(col = "lightgrey")+
+  theme_minimal() +
+  scale_y_log10()
+
+```
+
+
+### Total number of cotizantes by municipality
+
+```{r, fig.height=12, fig.width=12, echo = F, results = F}
+data_sum_nte %>% 
+  mutate(Municipio = factor(
+    x = ifelse(!(Municipio %in% Munips_top05), "Other", Municipio),
+    levels = c(Munips_top05, "Other")
+  )) %>% 
+  group_by(Municipio) %>% 
+  summarise(mean = sum(mean, na.rm = T), placeholder = "") %>% 
+  ungroup() %>% 
+
+  ggplot(., aes(y = Municipio, x = mean)) +
+  geom_bar(position = "stack", stat = "identity") +
+  theme_minimal()
+
+```
+
+
+### Distribution of log(total number of cotizantes)
+
+```{r, fig.height=12, fig.width=12, echo = F, results = F}
+ggplot(data_sum_nte, aes(x = log(mean))) +
+  geom_histogram() +
+  theme_minimal() +
+  labs(x = "Log(mean no. of cotizantes per year)")
+
+```
+
+### Distribution observed years per municipality
+
+```{r, fig.height=12, fig.width=12, echo = F, results = F}
+ggplot(data_sum_nte, aes(x = n)) +
+  geom_histogram() +
+  theme_minimal() +
+  labs(x = "Number of non-NA years")
+
+```
+
+### Scatter plot of coal output (ANM) and total number of cotizantes (PILA)
+
+```{r, fig.height=12, fig.width=12, echo = F, results = F}
+graph <- ggplot(merged_data, aes(x = CoalOutput, y = NumeroTotalEmpleados, col = year)) +
+  geom_point() +
+  geom_smooth(col = "black") +
+  scale_y_log10() + scale_x_log10()
+
+ggMarginal(graph, type = "boxplot")
+```
+
+### Scatter plot of coal output (ANM) and total number of employees (PILA), without top and bottom 5%-quantiles
+
+```{r, fig.height=12, fig.width=12, echo = F, results = F}
+graph2 <- merged_data %>% 
+  filter(
+    NumeroTotalEmpleados > quantile(merged_data$NumeroTotalEmpleados, .05, na.rm = T),
+    NumeroTotalEmpleados < quantile(merged_data$NumeroTotalEmpleados, .95, na.rm = T),
+    CoalOutput > quantile(merged_data$CoalOutput, .05, na.rm = T),
+    CoalOutput < quantile(merged_data$CoalOutput, .95, na.rm = T)
+  ) %>% 
+  
+  ggplot(., aes(x = CoalOutput, y = NumeroTotalEmpleados, col = year)) +
+  geom_point() +
+  geom_smooth(col = "black") +
+  scale_y_log10() + scale_x_log10()
+
+ggMarginal(graph2, type = "boxplot")
+
+```

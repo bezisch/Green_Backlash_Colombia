@@ -1,0 +1,201 @@
+---
+title: "First Exploration of PILA Data"
+author: "Lennard Naumann"
+date: "2023-04-27"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+
+library(tidyverse)
+library(stringi)
+library(ggExtra)
+
+#### Data Prep Jobs
+
+data <- read.csv("../D4 Third Download/pila_2023-04-24_2011_2022_1_vars.csv", encoding = "latin1") %>% 
+  mutate(
+    Departamento = stri_trans_general(Departamento, id = "Latin-ASCII"),
+    sector = stri_trans_general(sector, id = "Latin-ASCII")
+  ) %>% 
+  # Start in 2011, barely anything before that (see graphs w/o this restriction for comparison)
+  filter(year >= 2011, sector == "B - EXPLOTACION DE MINAS Y CANTERAS") %>% 
+  group_by(Departamento, year) %>% 
+  summarize(value = sum(value, na.rm = T)) %>% 
+  mutate(Departamento = str_to_upper(str_remove_all(Departamento, "[0-9]* - "))) %>% 
+  filter(Departamento != "-NO DEFINIDO" & Departamento != "ARCHIPIELAGO DE SAN ANDRES, PROVIDENCIA Y SANTA CATALINA")
+
+data_nz <- data %>% 
+  group_by(Departamento) %>% 
+  filter(sum(!is.na(value)) > 0) %>% 
+  ungroup %>% 
+  mutate(value = ifelse(is.na(value), 0, value))
+
+data_sum <- data %>% 
+  group_by(Departamento) %>% 
+  summarise(
+    n = sum(!is.na(value)),
+    mean = mean(value, na.rm = T),
+    sd = sd(value, na.rm = T)
+  )
+
+
+data_nz2 <- filter(data_nz, Departamento != "11 - Bogota, D.C.")
+
+data_sum_nte <- data_sum
+Munips_top75 <- data_sum_nte %>% 
+  filter(mean >= quantile(data_sum_nte$mean, .25, na.rm = T)) %>% 
+  pull(Departamento)
+Munips_top05 <- data_sum_nte %>% 
+  filter(mean >= quantile(data_sum_nte$mean, .95, na.rm = T)) %>% 
+  arrange(-mean) %>% 
+  pull(Departamento)
+data_nte <- data_nz %>% 
+  filter(Departamento %in% Munips_top75)
+
+Munips_top75_full <- data_sum_nte %>% 
+  filter(n == 12) %>% 
+  pull(Departamento)
+data_nte_full <- filter(data_nte, Departamento %in% Munips_top75_full)
+
+#### Data prep Mining
+
+anm <- read.csv("../../0Data/ANM/Mineria_-_Materiales_extraidos_en_Colombia_2012_a_2017.csv")
+names(anm) <- stri_trans_general(names(anm), id = "Latin-ASCII")
+
+dt_min <- anm %>% 
+  filter(Recurso.Natural == "CARBON") %>% 
+  transmute(
+    Departamento = str_to_upper(stri_trans_general(Departamento, id = "Latin-ASCII")),
+    year = as.numeric(Ano.Produccion),
+    CoalOutput = ifelse(
+      Unidad.Medida == "TONELADAS", Cantidad.Produccion, ifelse(
+        Unidad.Medida == "LIBRAS", Cantidad.Produccion/2000, ifelse(
+          Unidad.Medida == "GRAMOS", Cantidad.Produccion/1000000, ifelse(
+            Unidad.Medida == "QUILATES", Cantidad.Produccion/5000000, NA
+          ))))
+  ) %>% 
+  filter(!is.na(CoalOutput) & Departamento!="" & !is.na(Departamento)) %>%
+  group_by(Departamento, year) %>% 
+  dplyr::summarise(CoalOutput = sum(CoalOutput, na.rm = T)) %>% 
+  ungroup()
+
+# Create merged data
+merged_data <- data_nte %>%
+  transmute(
+    Departamento = Departamento,
+    year = year,
+    NumeroTotalCotizantes = value
+  ) %>% 
+  left_join(dt_min, by = c("Departamento", "year"))
+```
+
+
+
+## Mining Jobs
+
+### Path plot for total number of cotizantes
+
+```{r, fig.height=12, fig.width=12, echo = F, results = F}
+ggplot(data_nte, aes(x = year, y = value, group = Departamento)) +
+  geom_path(col = "lightgrey") +
+  theme_minimal()
+
+```
+
+
+### Path plot for total number of cotizantes, only full observations
+
+```{r, fig.height=12, fig.width=12, echo = F, results = F}
+ggplot(data_nte_full, aes(x = year, y = value, group = Departamento)) +
+  geom_path(col = "lightgrey") +
+  theme_minimal()
+
+```
+
+
+### Path plot for log(total number of cotizantes), only full observations
+
+```{r, fig.height=12, fig.width=12, echo = F, results = F}
+ggplot(data_nte_full, aes(x = year, y = value, group = Departamento)) +
+  geom_path(col = "lightgrey")+
+  theme_minimal() +
+  scale_y_log10()
+
+```
+
+
+### Total number of cotizantes by department
+
+```{r, fig.height=12, fig.width=12, echo = F, results = F}
+data_sum_nte %>% 
+  mutate(Departamento = factor(
+    x = Departamento,
+    levels = (data_sum_nte %>% arrange(mean) %>% pull(Departamento))
+  )) %>% 
+  
+
+  ggplot(., aes(y = Departamento, x = mean)) +
+  geom_bar(position = "stack", stat = "identity") +
+  theme_minimal()
+
+```
+
+
+### Distribution of log(total number of cotizantes)
+
+```{r, fig.height=12, fig.width=12, echo = F, results = F}
+ggplot(data_sum_nte, aes(x = mean)) +
+  geom_histogram() +
+  theme_minimal() +
+  scale_x_log10() +
+  labs(x = "Mean no. of cotizantes per year")
+
+```
+
+### Distribution observed years per departamento
+
+```{r, fig.height=12, fig.width=12, echo = F, results = F}
+ggplot(data_sum_nte, aes(x = n)) +
+  geom_histogram(bins = 12) +
+  theme_minimal() +
+  labs(x = "Number of non-NA years")
+
+```
+
+### Scatter plot of coal output (ANM) and total number of cotizantes (PILA), logged axes
+
+```{r, fig.height=12, fig.width=12, echo = F, results = F}
+graph <- ggplot(merged_data) +
+    geom_point(size = 5, aes(x = CoalOutput, y = NumeroTotalCotizantes, col = year, shape = Departamento)) +
+    geom_smooth(col = "black", aes(x = CoalOutput, y = NumeroTotalCotizantes)) +
+    scale_y_log10() + scale_x_log10() +
+    scale_shape_manual(values = 1:27) +
+theme(legend.position = "bottom")
+
+ggMarginal(graph, type = "boxplot")
+```
+
+### Scatter plot of coal output (ANM) and total number of employees (PILA), without top and bottom 5%-quantiles, logged axes
+
+```{r, fig.height=12, fig.width=12, echo = F, results = F}
+graph2 <- merged_data %>% 
+  filter(
+    NumeroTotalCotizantes > quantile(merged_data$NumeroTotalCotizantes, .05, na.rm = T),
+    NumeroTotalCotizantes < quantile(merged_data$NumeroTotalCotizantes, .95, na.rm = T),
+    CoalOutput > quantile(merged_data$CoalOutput, .05, na.rm = T),
+    CoalOutput < quantile(merged_data$CoalOutput, .95, na.rm = T)
+  ) %>% 
+  
+  ggplot(.) +
+  geom_point(size = 5, aes(x = CoalOutput, y = NumeroTotalCotizantes, col = year, shape = Departamento)) +
+  geom_smooth(col = "black", aes(x = CoalOutput, y = NumeroTotalCotizantes)) +
+  scale_y_log10() + scale_x_log10() +
+  scale_shape_manual(values = 1:27) +
+  theme(legend.position = "bottom")
+
+ggMarginal(graph2, type = "boxplot")
+
+```
