@@ -1,0 +1,8 @@
+"Activity","Indicator","Coef_Correlation","T_Statistic","P_Value","Significance","Coef_Fmt","P_Val_Fmt"
+"Coal","Coal: Avg Annual Royalties (COP)",-0.065878655611587,-2.12094323883004,0.0341645302353053,"** (p < 0.05)","-0.0659","3.4165e-02"
+"Coal","Coal: Avg Annual Production Volume",-0.0717619711716456,-2.31129488445636,0.0210128618323887,"** (p < 0.05)","-0.0718","2.1013e-02"
+"Oil/Gas","Oil: Avg Annual Production Volume",0.0609171514602403,1.9605898330138,0.0501955782369593,"* (p < 0.10)","0.0609","5.0196e-02"
+"Oil/Gas","Oil: Avg Annual Royalties (COP)",0.0605627511860979,1.94914151353866,0.0515491620650862,"* (p < 0.10)","0.0606","5.1549e-02"
+"Oil/Gas","Gas: Avg Annual Production Volume",0.00574742417389555,0.184637653443555,0.85354952677485,"Not significant","0.0057","8.5355e-01"
+"Oil/Gas","Gas: Avg Annual Royalties (COP)",0.0140014950404735,0.449838718901075,0.652921205593305,"Not significant","0.0140","6.5292e-01"
+"Solar (Renewables)","Solar: Avg Capacity (MW)",0.00679265798776796,0.218217520298168,0.827302776606958,"Not significant","0.0068","8.2730e-01"
