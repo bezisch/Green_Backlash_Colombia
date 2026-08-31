@@ -6,8 +6,8 @@ This table compares the average values of coal, oil/gas, and solar energy variab
 | :--- | :--- | :---: | :---: | :---: | :--- |
 | **Coal** | % of Municipalities with Mining | 2.78% | 13.83% | **0.20x** | **** (p < 0.01)* |
 | **Coal** | Average Annual Royalties (COP) | $   76,407,780.14 | $3,912,270,997.37 | **0.02x** | *** (p < 0.05)* |
-| **Oil/Gas** | % of Producing Municipalities | 13.89% | 10.15% | **1.37x** | *Not significant* |
-| **Oil/Gas** | Average Annual Royalties (COP) | $3,679,217,938.57 | $4,662,047,886.25 | **0.79x** | *Not significant* |
+| **Oil/Gas** | % of Producing Municipalities | 13.89% | 11.22% | **1.24x** | *Not significant* |
+| **Oil/Gas** | Average Annual Royalties (COP) | $4,334,845,500.58 | $6,218,099,994.63 | **0.70x** | *Not significant* |
 | **Solar (Renewables)** | % of Municipalities with Projects | 19.44% | 11.41% | **1.70x** | *Not significant* |
 | **Solar (Renewables)** | Average Capacity (MW) | 8.03 MW | 3.07 MW | **2.62x** | *Not significant* |
 

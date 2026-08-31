@@ -8,10 +8,10 @@ A **negative correlation coefficient** ($r < 0$) indicates that municipalities w
 | :--- | :--- | :---: | :---: | :--- |
 | **Coal** | Coal: Avg Annual Royalties (COP) | **-0.0659** | 3.4165e-02 | *** (p < 0.05)* |
 | **Coal** | Coal: Avg Annual Production Volume | **-0.0718** | 2.1013e-02 | *** (p < 0.05)* |
-| **Oil/Gas** | Oil: Avg Annual Production Volume | **0.0609** | 5.0196e-02 | ** (p < 0.10)* |
-| **Oil/Gas** | Oil: Avg Annual Royalties (COP) | **0.0606** | 5.1549e-02 | ** (p < 0.10)* |
-| **Oil/Gas** | Gas: Avg Annual Production Volume | **0.0057** | 8.5355e-01 | *Not significant* |
-| **Oil/Gas** | Gas: Avg Annual Royalties (COP) | **0.0140** | 6.5292e-01 | *Not significant* |
+| **Oil/Gas** | Oil: Avg Annual Production Volume | **0.0640** | 3.9546e-02 | *** (p < 0.05)* |
+| **Oil/Gas** | Oil: Avg Annual Royalties (COP) | **0.0659** | 3.4047e-02 | *** (p < 0.05)* |
+| **Oil/Gas** | Gas: Avg Annual Production Volume | **0.0032** | 9.1739e-01 | *Not significant* |
+| **Oil/Gas** | Gas: Avg Annual Royalties (COP) | **0.0099** | 7.5078e-01 | *Not significant* |
 | **Solar (Renewables)** | Solar: Avg Capacity (MW) | **0.0068** | 8.2730e-01 | *Not significant* |
 
 > *** p < 0.01; ** p < 0.05; * p < 0.10.

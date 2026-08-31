@@ -101,12 +101,17 @@ coal_summary['has_coal_mining'] = (coal_summary['coal_royalties_avg'] > 0).astyp
 coal_summary.rename(columns={'dane_code_str': 'dane_code'}, inplace=True)
 
 
-print("\n=== 3. PROCESSING OIL & GAS DATA (datos_completos) ===")
-oil_gas_file = "data/energy_mining/oil_gas/datos_completos_prod_regalias_2010_2021.csv"
-oil_gas_data = pd.read_csv(oil_gas_file)
+print("\n=== 3. PROCESSING OIL & GAS DATA (2018-2026) ===")
+oil_gas_file = "data/energy_mining/oil_gas/Consolidación_de_liquidación_de_regalías_por_campo_20260702.csv.gz"
+if not os.path.exists(oil_gas_file):
+    oil_gas_file = "data/energy_mining/oil_gas/Consolidación_de_liquidación_de_regalías_por_campo_20260702.csv.gz"
 
-# Average of recent years (2018-2021, i.e., 4 years)
-oil_gas_recent = oil_gas_data[oil_gas_data['Anio'] >= 2018].copy()
+oil_gas_data = pd.read_csv(oil_gas_file, compression='gzip' if oil_gas_file.endswith('.gz') else None)
+
+# Average of recent years (2018-2026)
+oil_gas_recent = oil_gas_data[oil_gas_data['Año'] >= 2018].copy()
+years_count = len(oil_gas_recent['Año'].unique())
+
 oil_gas_recent['ProdGravableBlsKpc'] = oil_gas_recent['ProdGravableBlsKpc'].apply(clean_num)
 oil_gas_recent['RegaliasCOP'] = oil_gas_recent['RegaliasCOP'].apply(clean_num)
 
@@ -115,8 +120,8 @@ oil_gas_mun = oil_gas_recent.groupby(['Departamento', 'Municipio', 'TipoHidrocar
     total_reg=('RegaliasCOP', 'sum')
 ).reset_index()
 
-oil_gas_mun['avg_prod_annual'] = oil_gas_mun['total_prod'] / 4
-oil_gas_mun['avg_reg_annual'] = oil_gas_mun['total_reg'] / 4
+oil_gas_mun['avg_prod_annual'] = oil_gas_mun['total_prod'] / years_count
+oil_gas_mun['avg_reg_annual'] = oil_gas_mun['total_reg'] / years_count
 
 # Split oil & gas
 oil_mun = oil_gas_mun[oil_gas_mun['TipoHidrocarburo'] == "O"][['Departamento', 'Municipio', 'avg_prod_annual', 'avg_reg_annual']].copy()

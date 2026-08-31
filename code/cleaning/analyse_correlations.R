@@ -78,30 +78,43 @@ coal_summary <- coal_data %>%
   mutate(has_coal_mining = ifelse(coal_royalties_avg > 0, 1, 0))
 
 
-cat("\n=== 3. PROCESSING OIL & GAS DATA (datos_completos) ===\n")
-oil_gas_file <- "data/energy_mining/oil_gas/datos_completos_prod_regalias_2010_2021.csv"
-oil_gas_data <- read.csv(oil_gas_file)
+cat("\n=== 3. PROCESSING OIL & GAS DATA (2018-2026) ===\n")
+oil_gas_file <- "data/energy_mining/oil_gas/Consolidación_de_liquidación_de_regalías_por_campo_20260702.csv.gz"
+if (!file.exists(oil_gas_file)) {
+  oil_gas_file <- "data/energy_mining/oil_gas/Consolidación_de_liquidación_de_regalías_por_campo_20260702.csv.gz"
+}
 
-# Average of recent years (2018-2021, i.e., 4 years)
+oil_gas_data <- read.csv(gzfile(oil_gas_file))
+
+# Average of recent years (2018-2026)
 oil_gas_recent <- oil_gas_data %>%
-  filter(Anio >= 2018) %>%
+  filter(Año >= 2018)
+
+# Dynamic year count (2018-2026)
+unique_years <- unique(oil_gas_recent$Año)
+years_count <- length(unique_years)
+
+oil_gas_recent$Prod_Numeric <- clean_num(oil_gas_recent$ProdGravableBlsKpc)
+oil_gas_recent$Regalias_Numeric <- clean_num(oil_gas_recent$RegaliasCOP)
+
+oil_gas_mun <- oil_gas_recent %>%
   group_by(Departamento, Municipio, TipoHidrocarburo) %>%
   summarize(
-    total_prod = sum(ProdGravableBlsKpc, na.rm = TRUE),
-    total_reg = sum(RegaliasCOP, na.rm = TRUE),
+    total_prod = sum(Prod_Numeric, na.rm = TRUE),
+    total_reg = sum(Regalias_Numeric, na.rm = TRUE),
     .groups = "drop"
   ) %>%
   mutate(
-    avg_prod_annual = total_prod / 4,
-    avg_reg_annual = total_reg / 4
+    avg_prod_annual = total_prod / years_count,
+    avg_reg_annual = total_reg / years_count
   )
 
 # Split oil and gas
-oil_mun <- oil_gas_recent %>%
+oil_mun <- oil_gas_mun %>%
   filter(TipoHidrocarburo == "O") %>%
   select(Departamento, Municipio, oil_prod_avg = avg_prod_annual, oil_reg_avg = avg_reg_annual)
 
-gas_mun <- oil_gas_recent %>%
+gas_mun <- oil_gas_mun %>%
   filter(TipoHidrocarburo == "G") %>%
   select(Departamento, Municipio, gas_prod_avg = avg_prod_annual, gas_reg_avg = avg_reg_annual)
 
@@ -496,99 +509,4 @@ md_cor <- c(
 
 writeLines(md_cor, file.path(table_dir, "continuous_correlations.md"))
 cat("\nSaved continuous correlation CSV and Markdown table in:", table_dir, "\n")
-
-
-cat("\n=== 9. GENERATING GEOGRAPHIC MAPS ===\n")
-# Download GeoJSON if not present
-geojson_url <- "https://raw.githubusercontent.com/caticoa3/colombia_mapa/master/co_2018_MGN_MPIO_POLITICO.geojson"
-geojson_path <- "data/electoral/processed/colombia_municipios.geojson"
-
-if (file.exists(geojson_path)) {
-  library(sf)
-  
-  cat("Reading GeoJSON map data...\n")
-  colombia_map <- read_sf(geojson_path)
-  
-  # Standardize DANE codes
-  final_df$dane_code_str <- sprintf("%05d", as.integer(final_df$dane_code))
-  
-  # Merge map and data
-  map_data <- colombia_map %>%
-    left_join(final_df, by = c("MPIO_CCNCT" = "dane_code_str"))
-  
-  # Map 1: switched_plurality
-  cat("Plotting Map 1: switched_plurality...\n")
-  map_data$switched_plurality_char <- as.character(map_data$switched_plurality)
-  map_data$switched_plurality_char[is.na(map_data$switched_plurality_char)] <- "No Data"
-  
-  p_map1 <- ggplot(map_data) +
-    geom_sf(aes(fill = switched_plurality_char), color = "#ffffff", size = 0.05) +
-    scale_fill_manual(
-      values = c("FALSE" = "#e0e0e0", "TRUE" = "#e41a1c", "No Data" = "#ffffff"),
-      name = "Switched?"
-    ) +
-    theme_void() +
-    theme(
-      plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-      legend.position = "bottom"
-    ) +
-    labs(title = "Plurality Winner Switch - 2022 vs 2026")
-  
-  # Map 2: petro_share_diff
-  cat("Plotting Map 2: petro_share_diff...\n")
-  max_diff <- max(abs(map_data$petro_share_diff), na.rm = TRUE)
-  lim <- if (is.na(max_diff) || max_diff == 0) 0.3 else min(max_diff, 0.3)
-  
-  p_map2 <- ggplot(map_data) +
-    geom_sf(aes(fill = petro_share_diff), color = "#ffffff", size = 0.05) +
-    scale_fill_gradient2(
-      low = "#ca0020",
-      mid = "#f7f7f7",
-      high = "#0571b0",
-      midpoint = 0,
-      limits = c(-lim, lim),
-      oob = scales::squish,
-      name = "Support Difference"
-    ) +
-    theme_void() +
-    theme(
-      plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-      legend.position = "bottom"
-    ) +
-    labs(title = "Vote Share Difference (2026 - 2022)")
-  
-  # Map 3: petro_supporter_switched
-  cat("Plotting Map 3: petro_supporter_switched...\n")
-  map_data$petro_supporter_switched_factor <- factor(
-    map_data$petro_supporter_switched,
-    levels = c("Did not vote Petro before", "No Switch (Still Petro)", "Switched (Voted Petro before, not anymore)")
-  )
-  
-  p_map3 <- ggplot(map_data) +
-    geom_sf(aes(fill = petro_supporter_switched_factor), color = "#ffffff", size = 0.05) +
-    scale_fill_manual(
-      values = c(
-        "Did not vote Petro before" = "#cccccc",
-        "No Switch (Still Petro)" = "#3182bd",
-        "Switched (Voted Petro before, not anymore)" = "#de2d26"
-      ),
-      na.value = "#ffffff",
-      name = "Category"
-    ) +
-    theme_void() +
-    theme(
-      plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-      legend.position = "bottom"
-    ) +
-    labs(title = "Electoral Support and Switch Classification")
-  
-  # Save plots
-  ggsave(file.path(graph_dir, "map_switched_plurality.png"), plot = p_map1, width = 8, height = 10, dpi = 300)
-  ggsave(file.path(graph_dir, "map_petro_share_diff.png"), plot = p_map2, width = 8, height = 10, dpi = 300)
-  ggsave(file.path(graph_dir, "map_petro_supporter_switched.png"), plot = p_map3, width = 8, height = 10, dpi = 300)
-  
-  cat("Geographic maps generated and saved in:", graph_dir, "\n")
-} else {
-  cat("GeoJSON file not found. Skipping map generation.\n")
-}
 

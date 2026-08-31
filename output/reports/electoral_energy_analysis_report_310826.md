@@ -22,7 +22,7 @@ This report analyzes the electoral performance of the government coalition (*Pac
 
 We processed three energy/mining datasets to create municipal-level presence and intensity indicators:
 1.  **Coal Mining:** Average annual royalties and volumes (2018–2025) from the National Mining Agency (ANM).
-2.  **Oil & Gas:** Average annual production (2018–2021) from the Ministry of Mines and Energy (`datos_completos`).
+2.  **Oil & Gas (2018-2026):** Average annual production and royalties from 2018 to 2026 from the Ministry of Mines and Energy (`Consolidación_de_liquidación_de_regalías_por_campo_20260702`).
 3.  **Solar Renewables:** Active/testing solar projects and total capacity in MW from XM (grid operator).
 
 The table below compares the averages in the **36 Backlash Municipalities** against the **National Average** of all 1,034 municipalities.
@@ -33,13 +33,13 @@ The table below compares the averages in the **36 Backlash Municipalities** agai
 | :--- | :--- | :---: | :---: | :---: | :--- |
 | **Coal Mining** | % Municipalities with Mining | 2.78% | 13.83% | **0.20x** | $p < 0.01$ (Very Significant) |
 | | Avg Annual Royalties (COP) | $76,407,780.14 | $3,912,270,997.37 | **0.02x** | $p < 0.05$ (Significant) |
-| **Oil & Gas** | % Producing Municipalities | 13.89% | 10.15% | **1.37x** | Not significant |
-| | Avg Annual Royalties (COP) | $3,679,217,938.57 | $4,662,047,886.25 | **0.79x** | Not significant |
+| **Oil & Gas** | % Producing Municipalities | 13.89% | 11.22% | **1.24x** | Not significant |
+| | Avg Annual Royalties (COP) | $4,334,845,500.58 | $6,218,099,994.63 | **0.70x** | Not significant |
 | **Solar (Renewables)** | % Municipalities with Projects | 19.44% | 11.41% | **1.70x** | Not significant |
 | | Avg Capacity (MW) | 8.03 MW | 3.07 MW | **2.62x** | Not significant |
 
 **Brief Interpretation:**  
-Municipalities that shifted away from the government are **1.37 times more likely** to produce oil and gas and **1.70 times more likely** to host active solar projects, representing **2.62 times** the average national solar capacity. Conversely, they are significantly less likely to host coal mining.
+Municipalities that shifted away from the government are **1.24 times more likely** to produce oil and gas and **1.70 times more likely** to host active solar projects, representing **2.62 times** the average national solar capacity. Conversely, they are significantly less likely to host coal mining.
 
 ![Presence of Energy Activities](file:///Users/brigittecastaneda/Documents/GitHub/Green_Backlash_Colombia/output/graphs/plot_presence_shares.png)
 
@@ -55,16 +55,16 @@ A **negative correlation** ($r < 0$) indicates that municipalities with higher e
 
 | Activity | Indicator | Pearson Correlation ($r$) | p-value | Significance |
 | :--- | :--- | :---: | :---: | :--- |
-| **Coal** | Coal: Avg Annual Production Volume | **-0.0718** | $2.10 \times 10^{-2}$ | *** (p < 0.05)** |
-| **Coal** | Coal: Avg Annual Royalties (COP) | **-0.0659** | $3.41 \times 10^{-2}$ | *** (p < 0.05)** |
-| **Oil/Gas** | Oil: Avg Annual Production Volume | **+0.0609** | $5.02 \times 10^{-2}$ | **\* (p < 0.10)** |
-| **Oil/Gas** | Oil: Avg Annual Royalties (COP) | **+0.0606** | $5.15 \times 10^{-2}$ | **\* (p < 0.10)** |
-| **Oil/Gas** | Gas: Avg Annual Production Volume | **+0.0057** | $8.54 \times 10^{-1}$ | **Not significant** |
-| **Oil/Gas** | Gas: Avg Annual Royalties (COP) | **+0.0140** | $6.53 \times 10^{-1}$ | **Not significant** |
+| **Coal** | Coal: Avg Annual Production Volume | **-0.0718** | $2.10 \times 10^{-2}$ | **\*\* (p < 0.05)** |
+| **Coal** | Coal: Avg Annual Royalties (COP) | **-0.0659** | $3.41 \times 10^{-2}$ | **\*\* (p < 0.05)** |
+| **Oil/Gas** | Oil: Avg Annual Production Volume | **+0.0640** | $3.95 \times 10^{-2}$ | **\*\* (p < 0.05)** |
+| **Oil/Gas** | Oil: Avg Annual Royalties (COP) | **+0.0659** | $3.40 \times 10^{-2}$ | **\*\* (p < 0.05)** |
+| **Oil/Gas** | Gas: Avg Annual Production Volume | **+0.0032** | $9.17 \times 10^{-1}$ | **Not significant** |
+| **Oil/Gas** | Gas: Avg Annual Royalties (COP) | **+0.0099** | $7.51 \times 10^{-1}$ | **Not significant** |
 | **Solar (Renewables)** | Solar: Avg Capacity (MW) | **+0.0068** | $8.27 \times 10^{-1}$ | **Not significant** |
 
 **Brief Interpretation:**  
-At a national scale, coal mining shows a significant negative correlation with the change in vote share, confirming a drop in support in coal-producing regions. Oil production shows a marginally positive relationship. Solar capacity shows no linear correlation, indicating that the solar backlash is a localized presence-based friction rather than a linear function of project size.
+At a national scale, coal mining shows a significant negative correlation with the change in vote share, confirming a drop in support in coal-producing regions. Oil production shows a statistically significant positive relationship ($p < 0.05$), indicating that oil-producing municipalities retained higher support for the government. Solar capacity shows no linear correlation, indicating that the solar backlash is a localized presence-based friction rather than a linear function of project size.
 
 ---
 
@@ -73,8 +73,7 @@ At a national scale, coal mining shows a significant negative correlation with t
 All deliverables are organized in the project repository under the following structure:
 
 *   **Reports (`output/reports/`):**
-    *   Report (this document, June format name): [`electoral_energy_analysis_report_250626.md`](file:///Users/brigittecastaneda/Documents/GitHub/Green_Backlash_Colombia/output/reports/electoral_energy_analysis_report_250626.md)
-    *   Report (current date format name): [`electoral_energy_analysis_report_250826.md`](file:///Users/brigittecastaneda/Documents/GitHub/Green_Backlash_Colombia/output/reports/electoral_energy_analysis_report_250826.md)
+    *   Report (current date format name): [`electoral_energy_analysis_report_310826.md`](file:///Users/brigittecastaneda/Documents/GitHub/Green_Backlash_Colombia/output/reports/electoral_energy_analysis_report_310826.md)
 *   **Tables (`output/tables/`):**
     *   Electoral switchers dataset: [`petro_switching.csv`](file:///Users/brigittecastaneda/Documents/GitHub/Green_Backlash_Colombia/output/tables/petro_switching.csv) & [`.dta`](file:///Users/brigittecastaneda/Documents/GitHub/Green_Backlash_Colombia/output/tables/petro_switching.dta)
     *   Binary comparison table & interpretations: [`energy_backlash_comparison.md`](file:///Users/brigittecastaneda/Documents/GitHub/Green_Backlash_Colombia/output/tables/energy_backlash_comparison.md) & [`.csv`](file:///Users/brigittecastaneda/Documents/GitHub/Green_Backlash_Colombia/output/tables/energy_backlash_comparison.csv)
