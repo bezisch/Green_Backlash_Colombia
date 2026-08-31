@@ -242,3 +242,100 @@ dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 write.csv(switching_df, file.path(output_dir, "petro_switching.csv"), row.names = FALSE)
 
 cat("\nSaved processed dataset in:", output_dir, "\n")
+
+
+
+cat("\n=== 9. GENERATING GEOGRAPHIC MAPS ===\n")
+# Download GeoJSON if not present
+geojson_url <- "https://raw.githubusercontent.com/caticoa3/colombia_mapa/master/co_2018_MGN_MPIO_POLITICO.geojson"
+geojson_path <- "data/electoral/processed/colombia_municipios.geojson"
+
+if (file.exists(geojson_path)) {
+  library(sf)
+  
+  cat("Reading GeoJSON map data...\n")
+  colombia_map <- read_sf(geojson_path)
+  
+  # Standardize DANE codes
+  final_df$dane_code_str <- sprintf("%05d", as.integer(final_df$dane_code))
+  
+  # Merge map and data
+  map_data <- colombia_map %>%
+    left_join(final_df, by = c("MPIO_CCNCT" = "dane_code_str"))
+  
+  # Map 1: switched_plurality
+  cat("Plotting Map 1: switched_plurality...\n")
+  map_data$switched_plurality_char <- as.character(map_data$switched_plurality)
+  map_data$switched_plurality_char[is.na(map_data$switched_plurality_char)] <- "No Data"
+  
+  p_map1 <- ggplot(map_data) +
+    geom_sf(aes(fill = switched_plurality_char), color = "#ffffff", size = 0.05) +
+    scale_fill_manual(
+      values = c("FALSE" = "#e0e0e0", "TRUE" = "#e41a1c", "No Data" = "#ffffff"),
+      name = "Switched?"
+    ) +
+    theme_void() +
+    theme(
+      plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+      legend.position = "bottom"
+    ) +
+    labs(title = "Plurality Winner Switch - 2022 vs 2026")
+  
+  # Map 2: petro_share_diff
+  cat("Plotting Map 2: petro_share_diff...\n")
+  max_diff <- max(abs(map_data$petro_share_diff), na.rm = TRUE)
+  lim <- if (is.na(max_diff) || max_diff == 0) 0.3 else min(max_diff, 0.3)
+  
+  p_map2 <- ggplot(map_data) +
+    geom_sf(aes(fill = petro_share_diff), color = "#ffffff", size = 0.05) +
+    scale_fill_gradient2(
+      low = "#ca0020",
+      mid = "#f7f7f7",
+      high = "#0571b0",
+      midpoint = 0,
+      limits = c(-lim, lim),
+      oob = scales::squish,
+      name = "Support Difference"
+    ) +
+    theme_void() +
+    theme(
+      plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+      legend.position = "bottom"
+    ) +
+    labs(title = "Vote Share Difference (2026 - 2022)")
+  
+  # Map 3: petro_supporter_switched
+  cat("Plotting Map 3: petro_supporter_switched...\n")
+  map_data$petro_supporter_switched_factor <- factor(
+    map_data$petro_supporter_switched,
+    levels = c("Did not vote Petro before", "No Switch (Still Petro)", "Switched (Voted Petro before, not anymore)")
+  )
+  
+  p_map3 <- ggplot(map_data) +
+    geom_sf(aes(fill = petro_supporter_switched_factor), color = "#ffffff", size = 0.05) +
+    scale_fill_manual(
+      values = c(
+        "Did not vote Petro before" = "#cccccc",
+        "No Switch (Still Petro)" = "#3182bd",
+        "Switched (Voted Petro before, not anymore)" = "#de2d26"
+      ),
+      na.value = "#ffffff",
+      name = "Category"
+    ) +
+    theme_void() +
+    theme(
+      plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+      legend.position = "bottom"
+    ) +
+    labs(title = "Electoral Support and Switch Classification")
+  
+  # Save plots
+  ggsave(file.path(graph_dir, "map_switched_plurality.png"), plot = p_map1, width = 8, height = 10, dpi = 300)
+  ggsave(file.path(graph_dir, "map_petro_share_diff.png"), plot = p_map2, width = 8, height = 10, dpi = 300)
+  ggsave(file.path(graph_dir, "map_petro_supporter_switched.png"), plot = p_map3, width = 8, height = 10, dpi = 300)
+  
+  cat("Geographic maps generated and saved in:", graph_dir, "\n")
+} else {
+  cat("GeoJSON file not found. Skipping map generation.\n")
+}
+
