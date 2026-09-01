@@ -1,42 +1,49 @@
 {
+  "year": "2026",
   "model_id": "marysanford/policlim",
   "model_labels": {
     "0": "LABEL_0",
     "1": "LABEL_1"
   },
+  "climate_label": "LABEL_1",
   "source_api_url": "https://api.github.com/repos/bezisch/Green_Backlash_Colombia/contents/data/manifestos/raw/2026",
   "pdfs": [
     {
+      "year": "2026",
       "filename": "Claudia-lopez-Programa-Gobierno-nueva-historia.pdf",
-      "local_path": "/home/charlott/data/manifestos/raw/2026/Claudia-lopez-Programa-Gobierno-nueva-historia.pdf",
+      "local_path": "/home/charlott/Dropbox/Green_Backlash_Colombia/data/manifestos/raw/2026/Claudia-lopez-Programa-Gobierno-nueva-historia.pdf",
       "source_url": "https://github.com/bezisch/Green_Backlash_Colombia/blob/main/data/manifestos/raw/2026/Claudia-lopez-Programa-Gobierno-nueva-historia.pdf",
       "raw_url": "https://raw.githubusercontent.com/bezisch/Green_Backlash_Colombia/main/data/manifestos/raw/2026/Claudia-lopez-Programa-Gobierno-nueva-historia.pdf",
       "action": "already present"
     },
     {
+      "year": "2026",
       "filename": "PROPUESTAS-DEL-TIGRE.pdf",
-      "local_path": "/home/charlott/data/manifestos/raw/2026/PROPUESTAS-DEL-TIGRE.pdf",
+      "local_path": "/home/charlott/Dropbox/Green_Backlash_Colombia/data/manifestos/raw/2026/PROPUESTAS-DEL-TIGRE.pdf",
       "source_url": "https://github.com/bezisch/Green_Backlash_Colombia/blob/main/data/manifestos/raw/2026/PROPUESTAS-DEL-TIGRE.pdf",
       "raw_url": "https://raw.githubusercontent.com/bezisch/Green_Backlash_Colombia/main/data/manifestos/raw/2026/PROPUESTAS-DEL-TIGRE.pdf",
       "action": "already present"
     },
     {
+      "year": "2026",
       "filename": "Plan Integrado de Gobierno Final_compressed.pdf",
-      "local_path": "/home/charlott/data/manifestos/raw/2026/Plan Integrado de Gobierno Final_compressed.pdf",
+      "local_path": "/home/charlott/Dropbox/Green_Backlash_Colombia/data/manifestos/raw/2026/Plan Integrado de Gobierno Final_compressed.pdf",
       "source_url": "https://github.com/bezisch/Green_Backlash_Colombia/blob/main/data/manifestos/raw/2026/Plan%20Integrado%20de%20Gobierno%20Final_compressed.pdf",
       "raw_url": "https://raw.githubusercontent.com/bezisch/Green_Backlash_Colombia/main/data/manifestos/raw/2026/Plan%20Integrado%20de%20Gobierno%20Final_compressed.pdf",
       "action": "already present"
     },
     {
+      "year": "2026",
       "filename": "Programa-Dignidad-Compromiso.pdf",
-      "local_path": "/home/charlott/data/manifestos/raw/2026/Programa-Dignidad-Compromiso.pdf",
+      "local_path": "/home/charlott/Dropbox/Green_Backlash_Colombia/data/manifestos/raw/2026/Programa-Dignidad-Compromiso.pdf",
       "source_url": "https://github.com/bezisch/Green_Backlash_Colombia/blob/main/data/manifestos/raw/2026/Programa-Dignidad-Compromiso.pdf",
       "raw_url": "https://raw.githubusercontent.com/bezisch/Green_Backlash_Colombia/main/data/manifestos/raw/2026/Programa-Dignidad-Compromiso.pdf",
       "action": "already present"
     },
     {
+      "year": "2026",
       "filename": "programa-gobierno-2026-2030.pdf",
-      "local_path": "/home/charlott/data/manifestos/raw/2026/programa-gobierno-2026-2030.pdf",
+      "local_path": "/home/charlott/Dropbox/Green_Backlash_Colombia/data/manifestos/raw/2026/programa-gobierno-2026-2030.pdf",
       "source_url": "https://github.com/bezisch/Green_Backlash_Colombia/blob/main/data/manifestos/raw/2026/programa-gobierno-2026-2030.pdf",
       "raw_url": "https://raw.githubusercontent.com/bezisch/Green_Backlash_Colombia/main/data/manifestos/raw/2026/programa-gobierno-2026-2030.pdf",
       "action": "already present"
