@@ -16,7 +16,7 @@ repo to analyse green voting backlash in Colombia, 2022-2026
 
 ## Climate salience in manifestos
 
-We apply the [policlim model](https://github.com/marysanford/policlim) (Sanford et al., 2025) to the 2022 and 2026 Colombian party manifestos, which identified 355 relevant sentences (relevancy >=0.8%). We used Sonnet 5 to identify 30 false negatives and then use the same model to further classify these 355 statements into just_transition, pro_ff, anti_ff and nationalism. 
+We apply the [policlim model](https://github.com/marysanford/policlim) (Sanford et al., 2025) to the 2022 and 2026 Colombian party manifestos, which identified 355 relevant sentences (relevancy >=0.8%). We used Sonnet 5 to identify 30 false negatives and then use the same model to further classify these 355 statements into just_transition, pro_ff, anti_ff and nationalism. We validate the entire dataset manually.
 
 policlim identifies 386 sentences as relevant with a relevancy filter of 0.8 or above (out of 5,062 sentences between 2022 and 2025). After identifying 30 false positives, our final sample is:
 
