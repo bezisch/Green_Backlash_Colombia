@@ -1,12 +1,12 @@
 # Green_Backlash_Colombia
-repo to analyse green voting backlash in Colombia, 2021-2026
+repo to analyse green voting backlash in Colombia, 2022-2026
 
 ## Data sources
 
 | Dataset | Source | Contact |
 |---|---|---|
 | 2026 primera vuelta results | Registraduría Nacional | Brigitte |
-| 2021 election results | Registraduría Nacional | Lotti |
+| 2022 election results | Registraduría Nacional | Lotti |
 | Coal/minerals production (monthly, municipio) | Agencia Nacional de Minería | Brigitte |
 | Oil & gas fields | ANH | Brigitte |
 | Solar energy | UPME | Brigitte |
@@ -16,4 +16,4 @@ repo to analyse green voting backlash in Colombia, 2021-2026
 
 ## Climate salience in manifestos
 
-We apply the [policlim model](https://github.com/marysanford/policlim) (Sanford et al., 2025) to the 2021 and 2026 Colombian party manifestos, if Colombia is inside/and infringement issues are resolved
+We apply the [policlim model](https://github.com/marysanford/policlim) (Sanford et al., 2025) to the 2022 and 2026 Colombian party manifestos, which identified 355 relevant sentences (relevancy >=0.8%). We used Sonnet 5 to identify 30 false negatives and then use the same model to further classify these 355 statements into just_transition, pro_ff, anti_ff and nationalism. 
