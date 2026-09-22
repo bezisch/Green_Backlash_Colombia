@@ -28,4 +28,23 @@ N=356 relevant (general policlim score). Hence: Pooling together manifesto data 
 
 We then merge the election data with the manifesto scores via the ID name_candidate_year.
 
+data/manifestos/apply_policlim_to_manifestos_2022_2026.ipynb
+Extracts manifesto PDFs (2022, 2026), classifies sentences with the policlim model, and compares those scores against an LLM re-classification of the high-score subset.
+
+Output: data/manifestos/output/policlim_comparison/policlim_manifesto_summary_all_years.csv (manifesto-level policlim scores)
+
+Output: data/manifestos/output/policlim_comparison/policlim_vs_llm_manifesto_scores.csv (policlim vs. LLM scores, weighted by 2026 vote share)
+
+data/manifestos/compare_llm_policlim.py
+Standalone script version of the policlim-vs-LLM comparison above (same output), runnable without the notebook's PDF pipeline.
+
+data/electoral/build_municipio_manifesto_vote_shares.py
+Matches 2022 and 2026 municipios (different coding schemes) and merges each candidate's municipio-level vote share with their manifesto's climate/LLM scores.
+
+Output: data/electoral/processed/municipio_switching/municipio_manifesto_vote_shares.csv
+Output: data/electoral/processed/municipio_switching/municipio_manifesto_summary_table.tex and ..._llm.tex (LaTeX summary tables)
+
+code/cleaning/analyse_switching.py
+Matches 2022 and 2026 municipios and tracks municipality-level switching between Petro (2022) and Cepeda (2026).
+
 Brigitte to test the PILA access.
