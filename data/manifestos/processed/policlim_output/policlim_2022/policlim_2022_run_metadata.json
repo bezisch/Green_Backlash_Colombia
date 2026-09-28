@@ -1,0 +1,44 @@
+{
+  "year": "2022",
+  "model_id": "marysanford/policlim",
+  "model_labels": {
+    "0": "LABEL_0",
+    "1": "LABEL_1"
+  },
+  "climate_label": "LABEL_1",
+  "source_api_url": "https://api.github.com/repos/bezisch/Green_Backlash_Colombia/contents/data/manifestos/raw/2022",
+  "pdfs": [
+    {
+      "year": "2022",
+      "filename": "Creemos Colombia Federico Gutiérrez.pdf",
+      "local_path": "/home/charlott/Dropbox/Green_Backlash_Colombia/data/manifestos/raw/2022/Creemos Colombia Federico Gutiérrez.pdf",
+      "source_url": "https://raw.githubusercontent.com/bezisch/Green_Backlash_Colombia/main/data/manifestos/raw/2022/Creemos Colombia Federico Gutiérrez.pdf",
+      "raw_url": "https://raw.githubusercontent.com/bezisch/Green_Backlash_Colombia/main/data/manifestos/raw/2022/Creemos Colombia Federico Gutiérrez.pdf",
+      "action": "local only"
+    },
+    {
+      "year": "2022",
+      "filename": "Programa-de-gobierno-Gustavo-Petro-2022-–-2026.pdf",
+      "local_path": "/home/charlott/Dropbox/Green_Backlash_Colombia/data/manifestos/raw/2022/Programa-de-gobierno-Gustavo-Petro-2022-–-2026.pdf",
+      "source_url": "https://raw.githubusercontent.com/bezisch/Green_Backlash_Colombia/main/data/manifestos/raw/2022/Programa-de-gobierno-Gustavo-Petro-2022-–-2026.pdf",
+      "raw_url": "https://raw.githubusercontent.com/bezisch/Green_Backlash_Colombia/main/data/manifestos/raw/2022/Programa-de-gobierno-Gustavo-Petro-2022-–-2026.pdf",
+      "action": "local only"
+    },
+    {
+      "year": "2022",
+      "filename": "RodolfoHernandez-ProgramaDeGobierno.pdf",
+      "local_path": "/home/charlott/Dropbox/Green_Backlash_Colombia/data/manifestos/raw/2022/RodolfoHernandez-ProgramaDeGobierno.pdf",
+      "source_url": "https://raw.githubusercontent.com/bezisch/Green_Backlash_Colombia/main/data/manifestos/raw/2022/RodolfoHernandez-ProgramaDeGobierno.pdf",
+      "raw_url": "https://raw.githubusercontent.com/bezisch/Green_Backlash_Colombia/main/data/manifestos/raw/2022/RodolfoHernandez-ProgramaDeGobierno.pdf",
+      "action": "local only"
+    },
+    {
+      "year": "2022",
+      "filename": "resumen-propuestas-sergio-fajardo.pdf",
+      "local_path": "/home/charlott/Dropbox/Green_Backlash_Colombia/data/manifestos/raw/2022/resumen-propuestas-sergio-fajardo.pdf",
+      "source_url": "https://raw.githubusercontent.com/bezisch/Green_Backlash_Colombia/main/data/manifestos/raw/2022/resumen-propuestas-sergio-fajardo.pdf",
+      "raw_url": "https://raw.githubusercontent.com/bezisch/Green_Backlash_Colombia/main/data/manifestos/raw/2022/resumen-propuestas-sergio-fajardo.pdf",
+      "action": "local only"
+    }
+  ]
+}
