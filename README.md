@@ -47,4 +47,7 @@ Output: data/electoral/processed/municipio_switching/municipio_manifesto_summary
 code/cleaning/analyse_switching.py
 Matches 2022 and 2026 municipios and tracks municipality-level switching between Petro (2022) and Cepeda (2026).
 
+electoral\preparation_primera_vuelta_2022_2026.ipynb
+prepares the election results.
+
 Brigitte to test the PILA access.
