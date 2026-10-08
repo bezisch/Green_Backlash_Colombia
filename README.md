@@ -48,6 +48,9 @@ code/cleaning/analyse_switching.py
 Matches 2022 and 2026 municipios and tracks municipality-level switching between Petro (2022) and Cepeda (2026).
 
 electoral\preparation_primera_vuelta_2022_2026.ipynb
-prepares the election results.
+prepares the election results. 
+
+code/analysis/voting_analysis_2022_2026.ipynb is run after the preparation_primera_vuelta_2022_2026.ipynb file. 
+Analyses election results and identifies green backlash municipios. Further compares loosing raw vote counts vs. vote shares. 
 
 Brigitte to test the PILA access.
